@@ -20,7 +20,7 @@ The widget supports the following HTML input types.
 
 ## Getting Started
 
-## [Watch the Video: Deploying voice-trigger-workflows](https://)
+## [Watch the Video: Deploying voice-trigger-workflows](https://app.vidcast.io/share/fa542647-a44e-4636-b54c-bc27e430bf13)
 
 Requirements: Node.js, npm, WxCC Tenant, and cloud storage/cdn
 
