@@ -100,7 +100,11 @@ export class VoiceTriggerWorkflows extends LitElement {
     this._menuIsOpen = false;
 
     if (this._config[id].parameters) {
-      this._config[id].parameters.forEach(param => this.shadowRoot.querySelector(`[data-id-input="${id}"][name="${param.name}"]`).value = "");
+      this._config[id].parameters.forEach((param) => {
+        if (param.type !== 'hidden') {
+          this.shadowRoot.querySelector(`[data-id-input="${id}"][name="${param.name}"]`).value = "";
+        }
+      });
     }
 
     this._selected = null;
@@ -176,6 +180,12 @@ export class VoiceTriggerWorkflows extends LitElement {
           return html`
               <label>${param.label}</label>
               <input type="datetime-local" data-id-input="${index}" name="${param.name}">
+            `
+        }
+
+        if (param.type === 'hidden') {
+          return html`
+              <input type="hidden" data-id-input="${index}" name="${param.name}" value="${param.value}">
             `
         }
 

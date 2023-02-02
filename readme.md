@@ -11,6 +11,7 @@ Running this project creates a web component widget that gets deployed in the he
 The widget supports the following HTML input types.
 - input
 - select
+- hidden
 - datetime (uses browser native datetime-local capability, chrome works best)
 
 > Note:  The widget does not return a status code or success/fail message to the agent after triggering the workflow, however the status code and response body can be found in the browser console. 
@@ -50,12 +51,13 @@ Each object has the following key/value pairs:
    - **name** (string) - the key used when posting this data to the url
    - **label** (string) - The text shown for this input
    - **values** (array of strings) - Only used for select type.  Sets the select dropdown fields.
+   - **value** (string) - Only used for hidden type. Sets the value for the hidden key/value pair
 
 
 
 Below is a sample config of three workflows:
   - **Password Reset** has two parameters (input & select)
-  - **Schedule a Callback** has a single parameter (datetime)
+  - **Schedule a Callback** has a single parameter (datetime & hidden)
   - **Update Account** has no parameters
 
 
@@ -86,6 +88,11 @@ Below is a sample config of three workflows:
         "type": "datetime",
         "name": "scheduledTime",
         "label": "Enter callback Date & Time"
+      },
+      {
+        "type": "hidden",
+        "name": "emailAddress",
+        "value": "jdoe@example.com"
       }
     ]
   },
@@ -99,6 +106,10 @@ Below is a sample config of three workflows:
 
 
 ## Changelog
+
+#### [1.0.1] - 2023-02-01
+
+- Added hidden type to sliently pass a Key/Value pair
 
 #### [1.0.0] - 2022-12-21
 
