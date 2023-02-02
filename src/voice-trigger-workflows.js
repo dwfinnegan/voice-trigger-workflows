@@ -11,12 +11,12 @@ export class VoiceTriggerWorkflows extends LitElement {
     configJSON: {},
     taskMap: {},
     taskSelected: {},
-    _mainIsOpen: {state: true},
-    _menuIsOpen: {state: true},
-    _showBtn: {state: true},
-    _config: {state: true},
-    _selected: {sate: true}
-   }
+    _mainIsOpen: { state: true },
+    _menuIsOpen: { state: true },
+    _showBtn: { state: true },
+    _config: { state: true },
+    _selected: { sate: true }
+  }
 
   constructor() {
     super();
@@ -46,7 +46,7 @@ export class VoiceTriggerWorkflows extends LitElement {
     if (changedProperties.has('darkmode')) {
       this._theme = this.setTheme();
       this.requestUpdate();
-     }
+    }
 
     if (changedProperties.has('taskSelected')) {
       if (this.taskSelected == null) {
@@ -60,8 +60,8 @@ export class VoiceTriggerWorkflows extends LitElement {
 
     // This is only needed for the dev HTML sandbox
     // The ConfigJSON does not change once loaded in the agent desktop 
-    if (changedProperties.has('configJSON')){
-    this._config = JSON.parse(JSON.stringify(this.configJSON));
+    if (changedProperties.has('configJSON')) {
+      this._config = JSON.parse(JSON.stringify(this.configJSON));
     }
   }
 
@@ -80,9 +80,9 @@ export class VoiceTriggerWorkflows extends LitElement {
       this._menuIsOpen = false;
       if (this._selected) {
         this.cancelClicked();
-      } 
+      }
     }
-   }
+  }
 
 
   menuClicked(event) {
@@ -95,11 +95,11 @@ export class VoiceTriggerWorkflows extends LitElement {
   cancelClicked() {
     const id = this._selected;
     this.shadowRoot.querySelector(`[data-modal-id="${id}"]`).removeAttribute("opened");
-    
+
     this._mainIsOpen = false;
     this._menuIsOpen = false;
 
-    if (this._config[id].parameters){
+    if (this._config[id].parameters) {
       this._config[id].parameters.forEach(param => this.shadowRoot.querySelector(`[data-id-input="${id}"][name="${param.name}"]`).value = "");
     }
 
@@ -107,12 +107,12 @@ export class VoiceTriggerWorkflows extends LitElement {
   }
 
 
-  triggerClicked(event){
+  triggerClicked(event) {
     async function fetchWithTimeout(resource, options = {}) {
-      const { timeout = 6000 } = options;  
+      const { timeout = 6000 } = options;
       const controller = new AbortController();
       const id = setTimeout(() => controller.abort(), timeout);
-      const response = await fetch(resource, {...options, signal: controller.signal});
+      const response = await fetch(resource, { ...options, signal: controller.signal });
       clearTimeout(id);
       return response;
     }
@@ -123,11 +123,11 @@ export class VoiceTriggerWorkflows extends LitElement {
           timeout: 6000,
           method: 'POST',
           body: JSON.stringify(body),
-          headers: {'Content-Type': 'application/json'}
+          headers: { 'Content-Type': 'application/json' }
         });
         const data = await response.json();
         console.log('voice-trigger-workflow Post Result:', response.status, data);
-        
+
       } catch (error) {
         console.log('voice-trigger-workflow Post Error:', error);
       }
@@ -136,70 +136,70 @@ export class VoiceTriggerWorkflows extends LitElement {
     const id = event.target.getAttribute('data-id');
 
     let body = {};
-    if (this._config[id].parameters){
+    if (this._config[id].parameters) {
       this._config[id].parameters.forEach(param => {
         body[param.name] = this.shadowRoot.querySelector(`[data-id-input="${id}"][name="${param.name}"]`).value;
-        });
+      });
     }
 
     let key = this.taskSelected.interactionId;
     let task = JSON.parse(JSON.stringify(this.taskMap.get(key)));
 
-    body = {...body, ...task};
+    body = { ...body, ...task };
 
     sendTrigger(this._config[id].url, body);
     this.cancelClicked();
   }
 
-  
-  modalSectionTemplate(action, index){
+
+  modalSectionTemplate(action, index) {
     if (action.parameters) {
       return html`
         ${action.parameters.map(param => {
 
-          if (param.type === 'input') {
-            return html`
+        if (param.type === 'input') {
+          return html`
               <label>${param.label}</label>
               <input data-id-input="${index}" name="${param.name}" type="text">`
-          }
+        }
 
-          if (param.type === 'select') {
-            return html`
+        if (param.type === 'select') {
+          return html`
               <label>${param.label}</label>
               <select data-id-input="${index}" name="${param.name}">
-                ${param.values.map(value =>  html`<option>${value}</option>` )}
+                ${param.values.map(value => html`<option>${value}</option>`)}
               </select>
              `
-          }
+        }
 
-          if (param.type === 'datetime') {
-            return html`
+        if (param.type === 'datetime') {
+          return html`
               <label>${param.label}</label>
               <input type="datetime-local" data-id-input="${index}" name="${param.name}">
             `
-          }
-          
-        })}
+        }
+
+      })}
       `
     }
   }
 
- 
+
   render() {
     return html`
       ${this._showBtn
-          ? html`
+        ? html`
           <div id="voice-trigger-workflow" .className=${this._theme}>
             <div id="btn" @click=${this.btnClicked}><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16"><path d="M11.251.068a.5.5 0 0 1 .227.58L9.677 6.5H13a.5.5 0 0 1 .364.843l-8 8.5a.5.5 0 0 1-.842-.49L6.323 9.5H3a.5.5 0 0 1-.364-.843l8-8.5a.5.5 0 0 1 .615-.09zM4.157 8.5H7a.5.5 0 0 1 .478.647L6.11 13.59l5.732-6.09H9a.5.5 0 0 1-.478-.647L9.89 2.41 4.157 8.5z"/></svg></div>
             <div id="main" ?opened=${this._mainIsOpen}>
               <div id="menu" ?opened=${this._menuIsOpen}>
                 ${this._config.map((action, index) =>
-                  html`<p data-id="${index}" @click=${this.menuClicked}>${action.name}</p>`
-                )}
+          html`<p data-id="${index}" @click=${this.menuClicked}>${action.name}</p>`
+        )}
               </div>
     
               ${this._config.map((action, index) =>
-                html`
+          html`
                   <div data-modal-id="${index}" class="modal">
                     <header>
                       <p>Trigger ${action.name}?</p>
@@ -218,8 +218,8 @@ export class VoiceTriggerWorkflows extends LitElement {
             </div>
           </div>
       `
-      : html``
-    }`;
+        : html``
+      }`;
   }
 }
 
