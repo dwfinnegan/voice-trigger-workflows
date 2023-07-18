@@ -107,6 +107,11 @@ Below is a sample config of three workflows:
 
 ## Changelog
 
+#### [1.0.2] - 2023-07-21
+
+- Minor CSS changes to support advancedHeader 
+- Now supports both Header and advancedHeader in desktop layout
+
 #### [1.0.1] - 2023-02-01
 
 - Added hidden type to sliently pass a Key/Value pair
